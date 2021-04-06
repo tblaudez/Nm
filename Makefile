@@ -6,12 +6,12 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:06:14 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/03/31 15:07:59 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/04/06 14:28:04 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET = ft_nm
-CC = gcc
+CC = clang
 CFLAGS += -Wall -Wextra -Werror -I include/ -I libft/include/
 LIBRARIES = -Llibft/ -lft
 

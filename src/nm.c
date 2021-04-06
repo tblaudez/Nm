@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/03/31 15:43:28 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/06 14:27:29 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@
 #include <sys/mman.h> // mmap, munmap
 #include <stdio.h> // perror
 #include <elf.h> // ELF header
+#include <stdbool.h> // bool
+#include <stdlib.h> // system TODO: remove
 
 int	main(int argc, char *argv[]) {
 	struct stat		file_stat;
 	const char		*filename = argc < 2 ? "a.out" : argv[1];
-	void			*map_start;
+	char			*mapping;
 	int				fd;
 
 	if ((fd = open(filename, O_RDONLY)) == -1) {
@@ -33,28 +35,37 @@ int	main(int argc, char *argv[]) {
 	}
 
 	fstat(fd, &file_stat);
-	if ((map_start = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED) {
-		perror("ft_nm: mmap");
+	if (S_ISDIR(file_stat.st_mode)) {
+		ft_putendl_fd("ft_nm: Warning: is a directory", STDERR_FILENO); //TODO: printf
 		return 1;
 	}
 	
-	Elf64_Ehdr	*header = (Elf64_Ehdr*)map_start;
-	Elf64_Shdr	*sections = (Elf64_Shdr*)((char*)map_start + header->e_shoff);
-	Elf64_Sym	*symtab = NULL;
-
-
-	for (Elf64_Half i = 0; i < header->e_shnum; i++) {
-		if (sections[i].sh_type == SHT_SYMTAB) {
-			symtab = (Elf64_Sym*)((char*)map_start + sections[i].sh_offset);
-			break;
-		}
+	if ((mapping = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED) {
+		perror("ft_nm: mmap");
+		return 1;
 	}
 
-	for (;;)
-		symtab += sizeof(Elf64_Sym);
+	if (!ft_strncmp(ELFMAG, mapping, 4)) {
+		ft_putendl_fd("ft_nm: file format not recognized", STDERR_FILENO); //TODO: printf
+		return 1;
+	}
 
 	
-	munmap(map_start, file_stat.st_size);
+	// Elf64_Ehdr	*header = (Elf64_Ehdr*)mapping;
+	// Elf64_Shdr	*sections = (Elf64_Shdr*)((char*)mapping + header->e_shoff);
+	// Elf64_Sym	*symtab = NULL;
+
+	// for (Elf64_Half i = 0; i < header->e_shnum; i++) {
+	// 	if (sections[i].sh_type == SHT_SYMTAB) {
+	// 		symtab = (Elf64_Sym*)((char*)mapping + sections[i].sh_offset);
+	// 		break;
+	// 	}
+	// }
+
+	// for (;;)
+	// 	symtab += sizeof(Elf64_Sym);
+
+	munmap(mapping, file_stat.st_size);
 	close(fd);
 	return 0;
 }

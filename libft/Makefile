@@ -6,12 +6,12 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:28:54 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/03/31 15:08:34 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/04/06 09:19:16 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET = libft.a
-CC = gcc
+CC = clang
 CFLAGS += -Wall -Wextra -Werror -I include/
 
 SOURCES = $(wildcard src/*.c)

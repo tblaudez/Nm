@@ -1,19 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_putstr_fd.c                                     :+:    :+:            */
+/*   ft_strcmp.c                                        :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/03/31 14:04:53 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/03/31 14:07:26 by tblaudez      ########   odam.nl         */
+/*   Created: 2021/04/06 13:39:49 by tblaudez      #+#    #+#                 */
+/*   Updated: 2021/04/06 14:10:28 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h> // write
+#include <stdbool.h> // bool
+#include <stddef.h> // size_t
 
-size_t	ft_strlen(const char *s);
+bool ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i = 0;
 
-void	ft_putstr_fd(const char *s, int fd) {
-	write(fd, s, ft_strlen(s));
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+
+	return !(bool)(s1[i] - s2[i]);
+}
+
+bool ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t	i = 0;
+
+	if (n == 0)
+		return true;
+
+	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n - 1)
+		i++;
+
+	return !(bool)(s1[i] - s2[i]);
 }
