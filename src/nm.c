@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/06 14:27:29 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/07 10:40:48 by anonymous     ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main(int argc, char *argv[]) {
 
 	fstat(fd, &file_stat);
 	if (S_ISDIR(file_stat.st_mode)) {
-		ft_putendl_fd("ft_nm: Warning: is a directory", STDERR_FILENO); //TODO: printf
+		ft_putendl_fd(STDERR_FILENO, "ft_nm: Warning: is a directory"); //TODO: printf
 		return 1;
 	}
 	
@@ -46,7 +46,7 @@ int	main(int argc, char *argv[]) {
 	}
 
 	if (!ft_strncmp(ELFMAG, mapping, 4)) {
-		ft_putendl_fd("ft_nm: file format not recognized", STDERR_FILENO); //TODO: printf
+		ft_putendl_fd(STDERR_FILENO, "ft_nm: file format not recognized"); //TODO: printf
 		return 1;
 	}
 
