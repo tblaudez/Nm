@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:57:14 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/13 15:08:20 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/13 15:18:41 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static unsigned char get_flags(const char *str, char **aptr)
 	unsigned char flags = 0;
 	int i;
 
-	for (i = 0; ft_strchr(FLAGS, str[i]); i++) {
+	for (i = 1; ft_strchr(FLAGS, str[i]); i++) {
 		switch (str[i]) {
 			case '-':
 				flags |= MINUS;
