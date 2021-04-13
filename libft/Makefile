@@ -6,7 +6,7 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:28:54 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/04/06 09:19:16 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/04/13 15:09:38 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ CC = clang
 CFLAGS += -Wall -Wextra -Werror -I include/
 
 SOURCES = $(wildcard src/*.c)
+SOURCES += $(wildcard src/ft_fprintf/*.c)
 HEADERS = $(wildcard include/*.h)
 OBJECTS = $(SOURCES:%.c=%.o)
 

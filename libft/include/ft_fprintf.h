@@ -6,30 +6,25 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 11:12:03 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/04/07 15:54:11 by anonymous     ########   odam.nl         */
+/*   Updated: 2021/04/13 15:06:23 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <stddef.h>
+#include <stdbool.h> // bool
+#include <stdint.h> // uintmax_t
 
 #define FLAGS "-0+ #"
 #define FORMAT "diobxXscp%"
 
-#define LEFT_JUSTIFY 0x01
-#define ZERO_FILL 0x02
-#define EXPLICIT_SIGN 0x04
-#define POSITIVE_BLANK 0x08
-#define EXPLICIT_PREFIX 0x10
+#define MINUS 0x01
+#define ZERO 0x02
+#define PLUS 0x04
+#define BLANK 0x08
+#define HASHTAG 0x10
+#define CAPITAL 0x20
 
-#define IS_SEPARATOR(c) (c == '{' || c == '%')
-
-const char *color_codes[13][2] = {{"{RED}", "\x1b[31m"}, {"{GREEN}", "\x1b[32m"}, {"{YELLOW}", "\x1b[33m"},
-	{"{BLUE}", "\x1b[34m"}, {"{MAGENTA}", "\x1b[35m"}, {"{CYAN}", "\x1b[36m"}, {"{BOLD}", "\x1b[1m"}, 
-	{"{DIM}", "\x1b[2m"}, {"{UNDERLINED}", "\x1b[4m"}, {"{BLINK}", "\x1b[5m"}, {"{REVERSE}", "\x1b[7m"},
-	{"{HIDDEN}", "\x1b[8m"}, {"{EOC}", "\x1b[0m"}
-};
 
 typedef struct s_printf {
 	enum e_type {
@@ -39,4 +34,29 @@ typedef struct s_printf {
 	struct s_printf	*next;
 } t_printf;
 
+
+// apply_operator.c
+void apply_dec_operators(char **aptr, uintmax_t value, unsigned int flags);
+void apply_hex_operator(char **aptr, uintmax_t value, unsigned int flags);
+void apply_octal_operator(char **aptr, uintmax_t value, unsigned int flags);
+void apply_binary_operator(char **aptr, uintmax_t value, unsigned int flags);
+// convert_string.c
+char *convert_string(const char *str);
+// format_list.c
+void update_format_list(t_printf **format_list, enum e_type type, char *str);
+void free_format_list(t_printf **format_list);
+void print_format_list(int fd, t_printf *format_list);
+t_printf *create_format_list(const char *str);
+// ft_fprintf.c
 void ft_fprintf(int fd, const char *format, ...);
+// get_value.c
+char *get_int_value(unsigned char flags, unsigned int width);
+char *get_hex_value(unsigned char flags, unsigned int width);
+char *get_octal_value(unsigned char flags, unsigned int width);
+char *get_binary_value(unsigned char flags, unsigned int width);
+char *get_char_value(unsigned char flags, unsigned int width);
+char *get_string_value(unsigned char flags, unsigned int width);
+// utils.c
+const char *get_color_code(const char *color_string);
+char *is_color_converter(const char *str);
+char *is_format_converter(const char *str);

@@ -6,21 +6,23 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/04/07 15:57:57 by anonymous     ########   odam.nl         */
+/*   Updated: 2021/04/09 10:10:39 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h> // bool
 #include <stddef.h> // size_t
-#include <stdlib.h> // calloc
 
-#define MIN(a, b) (a < b ? a : b)
+void *ft_memalloc(size_t size);
 
-size_t	ft_strlen(const char *s) {
-	
+
+size_t	ft_strlen(const char *s)
+{	
 	size_t len = 0;
-	while (*s++)
+
+	while(s[len])
 		len++;
+
 	return len;
 }
 
@@ -64,7 +66,7 @@ char *ft_strncpy(char *dst, const char *src, size_t len)
 
 	for (i = 0; src[i] && i < len; i++)
 		dst[i] = src[i];
-	for (; i <= len; i++)
+	for (; i < len; i++)
 		dst[i] = '\0';
 
 	return dst;
@@ -75,17 +77,17 @@ char *ft_strsub(const char *str, size_t start, size_t size)
 	if (str == NULL || size == 0)
 		return NULL;
 	
-	char *substring = (char*)calloc(1, size);
-	ft_strncpy(substring, str + start, size);
+	char *substr = (char*)ft_memalloc(size + 1);
+	ft_strncpy(substr, str + start, size);
 
-	return substring;
+	return substr;
 }
 
 char *ft_strdup(const char *src)
 {
 	if (src == NULL)
 		return NULL;
-	char *str_dup = (char*)calloc(1, ft_strlen(src));
+	char *str_dup = (char*)ft_memalloc(ft_strlen(src) + 1);
 	ft_strcpy(str_dup, src);
 	return str_dup;
 }
@@ -94,7 +96,17 @@ char *ft_strndup(const char *src, size_t size)
 {
 	if (src == NULL)
 		return NULL;
-	char *str_dup = (char*)calloc(1, MIN(size, ft_strlen(src)));
-	ft_strncpy(str_dup, src, MIN(size, ft_strlen(src)));
-	return str_dup;
+	char *str_dup = (char*)ft_memalloc(size);;
+	return ft_strncpy(str_dup, src, size);
+}
+
+char *ft_strchr(const char *s, int c)
+{
+	if ((char)c == '\0')
+		return ((char*)s + ft_strlen(s));
+	for (int i = 0; s[i]; i++) {
+		if (s[i] == (char)c)
+			return (char*)s + i;
+	}
+	return NULL;
 }
