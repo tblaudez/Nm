@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:34:32 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/13 15:08:39 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/14 13:40:08 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ extern const char *color_codes[13][2];
 const char *get_color_code(const char *color_string)
 {
 	for (size_t i = 0; i < sizeof(color_codes) / sizeof(*color_codes); i++) {
-		if (ft_strcmp(color_string, color_codes[i][0]))
+		if (!ft_strcmp(color_string, color_codes[i][0]))
 			return color_codes[i][1];
 	}
 	return color_string;
@@ -28,7 +28,7 @@ const char *get_color_code(const char *color_string)
 char *is_color_converter(const char *str)
 {
 	for (size_t i = 0; i < sizeof(color_codes) / sizeof(*color_codes); i++) {
-		if (ft_strncmp(str, color_codes[i][0], ft_strlen(color_codes[i][0])))
+		if (!ft_strncmp(str, color_codes[i][0], ft_strlen(color_codes[i][0])))
 			return ft_strdup(color_codes[i][0]);
 	}
 	return NULL;

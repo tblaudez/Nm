@@ -6,7 +6,7 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/04/09 10:10:39 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/14 13:21:37 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ size_t	ft_strlen(const char *s)
 	return len;
 }
 
-bool ft_strcmp(const char *s1, const char *s2)
+int ft_strcmp(const char *s1, const char *s2)
 {
-	size_t	i = 0;
+	int	i = 0;
 
 	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
 
-	return !(bool)(s1[i] - s2[i]);
+	return (s1[i] - s2[i]);
 }
 
-bool ft_strncmp(const char *s1, const char *s2, size_t n)
+int ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i = 0;
 
@@ -46,7 +46,7 @@ bool ft_strncmp(const char *s1, const char *s2, size_t n)
 	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n - 1)
 		i++;
 
-	return !(bool)(s1[i] - s2[i]);
+	return (int)(s1[i] - s2[i]);
 }
 
 char *ft_strcpy(char *dst, const char *src)
