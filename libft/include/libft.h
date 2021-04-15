@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:24:51 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/14 14:51:16 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/15 10:16:18 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ void ft_lstdelone(t_list *lst, void (*del)(void*));
 void ft_lstclear(t_list **lst, void (*del)(void*));
 void ft_lstiter(t_list *lst, void (*f)(void*));
 t_list *ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*));
+t_list *ft_lstadd_back_null(t_list **lst, t_list *new);
+t_list *ft_lstadd_front_null(t_list **lst, t_list *new);
+void merge_sort_list(t_list **lst, int (*compare)(void *a, void *b));
 
 // memory.c
 void *ft_memset(void *dest, int c, size_t len);

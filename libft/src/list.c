@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/14 11:44:40 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/14 14:51:08 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/15 10:16:46 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,4 +109,63 @@ t_list *ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
 	} while (lst);
 
 	return new_lst;
+}
+
+t_list *ft_lstadd_back_null(t_list **lst, t_list *new)
+{
+	t_list *tmp = new->next;
+
+	ft_lstadd_back(lst, new);
+	new->next = NULL;
+
+	return tmp;
+}
+
+t_list *ft_lstadd_front_null(t_list **lst, t_list *new)
+{
+	t_list *tmp = new->next;
+
+	ft_lstadd_front(lst, new);
+	new->next = NULL;
+
+	return tmp;
+}
+
+static t_list *merge_list(t_list *left, t_list *right, int (*compare)(void *a, void *b))
+{
+	t_list *result = NULL;
+
+	while (left && right) {
+		if (compare(left->content, right->content) <= 0)
+			left = ft_lstadd_back_null(&result, left);
+		else
+			right = ft_lstadd_back_null(&result, right);
+	}
+
+	while (left)
+		left = ft_lstadd_back_null(&result, left);
+	while (right)
+		right = ft_lstadd_back_null(&result, right);
+
+	return result;
+}
+
+void merge_sort_list(t_list **lst, int (*compare)(void *a, void *b))
+{
+	t_list *node = *lst;
+	int lst_len;
+	
+	if ((lst_len = ft_lstsize(node)) <= 1)
+		return;
+	
+	t_list *left = NULL;
+	t_list *right = NULL;
+
+	for(int i = 0; node; i++)
+		node = ft_lstadd_back_null((i < lst_len / 2 ? &left : &right), node);
+	
+	merge_sort_list(&left, compare);
+	merge_sort_list(&right, compare);
+
+	*lst = merge_list(left, right, compare);
 }
