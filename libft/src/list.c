@@ -6,12 +6,13 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/14 11:44:40 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/15 10:16:46 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/19 10:04:10 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+// Create a new dynamically allocated list node and fill its content
 t_list *ft_lstnew(void *content)
 {
 	t_list *lst;
@@ -25,6 +26,7 @@ t_list *ft_lstnew(void *content)
 	return lst;
 }
 
+// Add node `new` as first node of the linked list pointed by `lst` 
 void ft_lstadd_front(t_list **lst, t_list *new)
 {
 	t_list *tmp = *lst;
@@ -33,26 +35,7 @@ void ft_lstadd_front(t_list **lst, t_list *new)
 	new->next = tmp;
 }
 
-int ft_lstsize(t_list *lst)
-{
-	int i = 0;
-
-	do {
-		i++;
-		lst = lst->next;
-	} while (lst);
-
-	return i;
-}
-
-t_list *ft_lstlast(t_list *lst)
-{
-	while (lst->next)
-		lst = lst->next;
-	
-	return lst;
-}
-
+// Add node `new` to the end of the linked list pointed by `lst`
 void ft_lstadd_back(t_list **lst, t_list *new)
 {
 	t_list *node = *lst;
@@ -66,12 +49,64 @@ void ft_lstadd_back(t_list **lst, t_list *new)
 	node->next = new;
 }
 
+// Same as `add_front` but sets the `next` attribute of the node to NULL
+// and returns said `next` attribute
+t_list *ft_lstadd_front_null(t_list **lst, t_list *new)
+{
+	t_list *tmp = new->next;
+
+	ft_lstadd_front(lst, new);
+	new->next = NULL;
+
+	return tmp;
+}
+
+// Same as `add_back` but sets the `next` attribute of the node to NULL
+// and returns said `next` attribute
+t_list *ft_lstadd_back_null(t_list **lst, t_list *new)
+{
+	t_list *tmp = new->next;
+
+	ft_lstadd_back(lst, new);
+	new->next = NULL;
+
+	return tmp;
+}
+
+// Compute the size of a non-circular linked list
+// `lst` is assumed to be the first node
+int ft_lstsize(t_list *lst)
+{
+	int i = 0;
+
+	while (lst) {
+		i++;
+		lst = lst->next;
+	}
+
+	return i;
+}
+
+// Return the last node of a non-circular linked list
+t_list *ft_lstlast(t_list *lst)
+{
+	if (!lst)
+		return NULL;
+
+	while (lst->next)
+		lst = lst->next;
+	
+	return lst;
+}
+
+// Deallocate a node and its content using free and `del`
 void ft_lstdelone(t_list *lst, void (*del)(void*))
 {
 	del(lst->content);
 	ft_memdel((void**)&lst);
 }
 
+// Deallocate all nodes of a linked list and their content
 void ft_lstclear(t_list **lst, void (*del)(void*))
 {
 	t_list *node = *lst;
@@ -86,49 +121,33 @@ void ft_lstclear(t_list **lst, void (*del)(void*))
 	*lst = NULL;
 }
 
+// Apply function `f` to the content attribute of each node of a linked list
 void ft_lstiter(t_list *lst, void (*f)(void*))
 {
-	do {
+	while (lst) {
 		f(lst->content);
 		lst = lst->next;
-	} while (lst);
+	}
 }
 
+// Create a new dynamically allocated linked list.
+// Each content attribute of the new list will be the result of 
+// calling `f` to the content attribute of each node of the "old" list
 t_list *ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
 {
 	t_list *new_lst = NULL;
 	t_list *node;
 
-	do {
+	while (lst) {
 		if (!(node = ft_lstnew(f(lst->content)))) {
 			ft_lstclear(&new_lst, del);
 			return NULL;
 		}
 		ft_lstadd_back(&new_lst, node);
 		lst = lst->next;
-	} while (lst);
+	}
 
 	return new_lst;
-}
-
-t_list *ft_lstadd_back_null(t_list **lst, t_list *new)
-{
-	t_list *tmp = new->next;
-
-	ft_lstadd_back(lst, new);
-	new->next = NULL;
-
-	return tmp;
-}
-
-t_list *ft_lstadd_front_null(t_list **lst, t_list *new)
-{
-	t_list *tmp = new->next;
-
-	ft_lstadd_front(lst, new);
-	new->next = NULL;
-
-	return tmp;
 }
 
 static t_list *merge_list(t_list *left, t_list *right, int (*compare)(void *a, void *b))
@@ -150,6 +169,7 @@ static t_list *merge_list(t_list *left, t_list *right, int (*compare)(void *a, v
 	return result;
 }
 
+// Merge sort a linked list using the `compare` function
 void merge_sort_list(t_list **lst, int (*compare)(void *a, void *b))
 {
 	t_list *node = *lst;
