@@ -6,13 +6,13 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:28:54 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/04/13 15:09:38 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/04/19 13:28:43 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET = libft.a
 CC = clang
-CFLAGS += -Wall -Wextra -Werror -I include/
+CFLAGS = -Wall -Wextra -Werror -I include/ $(EXTRA_FLAGS)
 
 SOURCES = $(wildcard src/*.c)
 SOURCES += $(wildcard src/ft_fprintf/*.c)

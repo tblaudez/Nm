@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/15 10:32:51 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/20 11:20:14 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,13 @@
 #include <sys/mman.h> // mmap, munmap
 #include <elf.h> // Elf64_Ehdr, Elf64_Shdr, Elf64_Sym
 #include <stdlib.h> // free
+#include <stdbool.h> // bool
 
 int file_fd = -1;
 char *file_map = NULL;
 t_list *symbol_list = NULL;
+Elf64_Ehdr *ehdr = NULL;
+Elf64_Shdr *shdr = NULL;
 struct stat file_stat;
 
 static inline int compare_symbols(void *a, void *b)
@@ -34,8 +37,80 @@ static inline int compare_symbols(void *a, void *b)
 
 static void display_symbol(void *ptr)
 {
-	t_symbol *symbol = (t_symbol*)ptr;
-	ft_fprintf(STDOUT_FILENO, "%016x X %s\n", symbol->value, symbol->name);
+	const t_symbol *symbol = (t_symbol*)ptr;
+	const unsigned char bind = ELF64_ST_BIND(symbol->symbol->st_info);
+	const bool local = (bind == STB_LOCAL);
+	const unsigned char type = ELF64_ST_TYPE(symbol->symbol->st_info);
+	const uint16_t shndx = symbol->symbol->st_shndx;
+	const Elf64_Shdr *section = shdr + shndx;
+	char c;
+
+	if (shndx >= ehdr->e_shnum)
+		return;
+
+	// Symbol is absolute
+	if (shndx == SHN_ABS)
+		c = 'A'; 
+
+	// Symbol is in the uninitialized data section
+	else if (section->sh_type == SHT_NOBITS && section->sh_flags == (SHF_ALLOC|SHF_WRITE))
+		c = (local ? 'b' : 'B'); 
+
+	// Symbol is common
+	else if (shndx == SHN_COMMON)
+		c = 'C';
+	
+	// Symbol is in the initialized data section
+	else if (section->sh_type == SHT_PROGBITS && section->sh_flags == (SHF_ALLOC|SHF_WRITE))
+		c = (local ? 'd' : 'D');
+
+	// G g - Initialized data section for small objects
+
+	// i - Symbol is an indirect function
+
+	// I - Symbol is an indirect reference to another symbol
+
+	// Symbol is a debugging symbol
+	else if (section->sh_type == SHT_PROGBITS && section->sh_flags == 0)
+		c = 'N';
+
+	// P - Symbols is in a stack unwind section
+
+	// Symbol is in read-only data section
+	else if (section->sh_type == SHT_PROGBITS && section->sh_flags == SHF_ALLOC)
+		c = (local ? 'r' : 'R');
+	
+	// S - Symbol is in uninitialized or zero-initialized data section for small objects
+
+	// Symbol is in the text (code) section.
+	else if (section->sh_type == SHT_PROGBITS && section->sh_flags == (SHF_ALLOC|SHF_EXECINSTR))
+		c = (local ? 't' : 'T');
+
+	// Symbol is undefined
+	else if (shndx == SHN_UNDEF)
+		c = 'U';
+	
+	// Symbol is unique global
+	else if (bind == STB_GNU_UNIQUE)
+		c = 'u';
+	
+	// Symbol is weak object
+	else if (bind == STB_WEAK && type == STT_OBJECT)
+		c = (shndx == SHN_UNDEF ? 'v' : 'V');
+	
+	// Symbol is a weak symbol
+	else if (bind == STB_WEAK)
+		c = (shndx == SHN_UNDEF ? 'w' : 'W');
+	
+	// Symbol type is unknown, or object file format specific
+	else
+		c = '?';
+	
+	
+	if (ft_strchr("Uwv", c))
+		ft_fprintf(STDOUT_FILENO, "%16c %c %s\n", ' ', c, symbol->name);
+	else if (symbol->symbol->st_value != 0)
+		ft_fprintf(STDOUT_FILENO, "%016x %c %s\n", symbol->symbol->st_value, c, symbol->name);
 }
 
 void open_and_map_file(const char *filename)
@@ -63,21 +138,20 @@ void open_and_map_file(const char *filename)
 	}
 }
 
-static t_symbol *create_symbol(char *name, unsigned char type, uint64_t value)
+static t_symbol *create_symbol(Elf64_Sym *symbol, const char *strtab)
 {
-	t_symbol *symbol = (t_symbol*)ft_memalloc(sizeof(t_symbol));
+	t_symbol *custom_symbol = (t_symbol*)ft_memalloc(sizeof(t_symbol));
 
-	symbol->name = name;
-	symbol->type = type;
-	symbol->value = value;
+	custom_symbol->symbol = symbol;
+	custom_symbol->name = strtab + symbol->st_name;
 
-	return symbol;
+	return custom_symbol;
 }
 
 static void fill_symbol_list()
 {
-	Elf64_Ehdr *ehdr = (Elf64_Ehdr*)file_map; // ELF header
-	Elf64_Shdr *shdr = (Elf64_Shdr*)(file_map + ehdr->e_shoff); // Section header is `e_shoff` after ELF header
+	ehdr = (Elf64_Ehdr*)file_map; // ELF header
+	shdr = (Elf64_Shdr*)(file_map + ehdr->e_shoff); // Section header is `e_shoff` after ELF header
 
 	for (int i = 0; i < ehdr->e_shnum; i++) { // Looping over all sections
 		if (shdr[i].sh_type == SHT_SYMTAB) { // If section is a Symbol table
@@ -88,9 +162,7 @@ static void fill_symbol_list()
 			for (int j = 0; j < symtab_len; j++) {
 				if (!ft_strcmp(symtab_strtab + symtab[j].st_name, ""))
 					continue;
-				t_symbol *symbol = create_symbol(symtab_strtab + symtab[j].st_name, \
-					ELF64_ST_TYPE(symtab[j].st_info), symtab[j].st_value);
-				ft_lstadd_back(&symbol_list, ft_lstnew(symbol));
+				ft_lstadd_back(&symbol_list, ft_lstnew(create_symbol(symtab + j, symtab_strtab)));
 			}
 		}
 	}
@@ -115,16 +187,18 @@ int	main(int argc, char *argv[])
 	// Map file in memory
 	open_and_map_file(filename);
 	
-	// Get symbols and sort them alphabetically
+	// Get symbols
 	fill_symbol_list();
 	if (!symbol_list) {
 		ft_fprintf(STDOUT_FILENO, "ft_nm: %s: no symbols\n", filename);
-		exit(EXIT_FAILURE);
+		return 1;
 	}
+	
+	// Sort list
 	merge_sort_list(&symbol_list, compare_symbols);
 	
 	// Display symbols
-	ft_lstiter(symbol_list, display_symbol); 
+	ft_lstiter(symbol_list, display_symbol);
 
 	return 0;
 }

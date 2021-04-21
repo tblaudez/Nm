@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:24:51 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/15 10:16:18 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/20 11:01:08 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void merge_sort_list(t_list **lst, int (*compare)(void *a, void *b));
 void *ft_memset(void *dest, int c, size_t len);
 void *ft_memalloc(size_t size);
 void ft_memdel(void **ap);
+void *ft_memcpy(void *dst, const void *src, size_t n);
 
 // number.c
 long ft_strtol(const char *str, char **endptr, int base);
