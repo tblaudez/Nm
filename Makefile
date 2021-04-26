@@ -6,7 +6,7 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:06:14 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/04/19 13:28:12 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/04/26 11:21:30 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ $(LIBFT):
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(LIBFT) $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBRARIES) -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBRARIES) -o $@
 
 clean:
 	-rm -f $(OBJECTS)
