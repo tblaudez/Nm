@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/08 13:27:37 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/20 11:04:42 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/27 09:24:17 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void *ft_memcpy(void *dst, const void *src, size_t n)
 {
 	void *ptr = dst;
 
-	for(size_t i = 0; i < n; i++) {
+	for (size_t i = 0; i < n; i++) {
 		*((char*)dst++) = *((char*)src++);
 	}
 

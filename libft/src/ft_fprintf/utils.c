@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:34:32 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/14 13:40:08 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/27 09:24:18 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char *is_format_converter(const char *str)
 	if (*str != '%')
 		return NULL;
 	// Test for flags
-	for(i = 1; ft_strchr(FLAGS, str[i]); i++);
+	for (i = 1; ft_strchr(FLAGS, str[i]); i++);
 	// Test for width
 	if (str[i] == '*')
 		i++;

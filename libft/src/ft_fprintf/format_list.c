@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:33:01 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/13 14:36:37 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/27 09:24:18 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void print_format_list(int fd, t_printf *format_list)
 {
 	char *convert;
 
-	for(; format_list; format_list = format_list->next) {
+	for (; format_list; format_list = format_list->next) {
 		switch (format_list->type) {
 			case STRING:
 				ft_putstr_fd(fd, format_list->str);

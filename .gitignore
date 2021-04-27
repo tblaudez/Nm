@@ -2,5 +2,5 @@
 .devcontainer/
 ft_nm
 *.[oa]
-*.debug
 nm.sh
+test_files/

@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/14 11:44:40 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/19 10:04:10 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/27 10:51:33 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ t_list *ft_lstlast(t_list *lst)
 // Deallocate a node and its content using free and `del`
 void ft_lstdelone(t_list *lst, void (*del)(void*))
 {
-	del(lst->content);
+	if (del)
+		del(lst->content);
 	ft_memdel((void**)&lst);
 }
 
@@ -181,7 +182,7 @@ void merge_sort_list(t_list **lst, int (*compare)(void *a, void *b))
 	t_list *left = NULL;
 	t_list *right = NULL;
 
-	for(int i = 0; node; i++)
+	for (int i = 0; node; i++)
 		node = ft_lstadd_back_null((i < lst_len / 2 ? &left : &right), node);
 	
 	merge_sort_list(&left, compare);
