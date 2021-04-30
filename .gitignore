@@ -2,5 +2,6 @@
 .devcontainer/
 ft_nm
 *.[oa]
-nm.sh
-test_files/
+*.sh
+32bits_files/
+64bits_files/

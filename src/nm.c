@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/27 11:26:30 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/04/30 11:10:00 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 #include <unistd.h> // fstat, close
 #include <sys/mman.h> // mmap, munmap
 #include <elf.h> // ELFMAG, SELFMAG, EI_CLASS
+#include <errno.h>
+#include <stdio.h> // perror
+#include <stdlib.h> // exit
 
 
 void ft_nm(const char *filename)
@@ -29,22 +32,31 @@ void ft_nm(const char *filename)
 	int fd;
 
 	if ((fd = open(filename, O_RDONLY)) == -1) {
-		ft_fprintf(STDERR_FILENO, "ft_nm: open: Could not open '%s'\n", filename);
+		perror("ft_nm");
 		return;
 	}
 	fstat(fd, &file_stat);
-	if ((mapping = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED) {
-		ft_fprintf(STDERR_FILENO, "ft_nm: mmap: Could not map '%s'\n", filename);
-		close(fd);
+	if (file_stat.st_size == 0)
 		return;
+	if ((mapping = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED) {
+		perror("ft_nm");
+		close(fd);
+		exit(EXIT_FAILURE);
 	}
 
 	if (!ft_strncmp(mapping, ELFMAG, SELFMAG)) {
-		if (mapping[EI_CLASS] == ELFCLASS32)
-			elf_32(mapping);
-		else if (mapping[EI_CLASS] == ELFCLASS64)
-			elf_64(mapping);
+		switch (mapping[EI_CLASS]) {
+			case ELFCLASS32:
+				elf32(mapping, filename);
+				break;
+			case ELFCLASS64:
+				elf64(mapping, filename);
+				break;
+			default:
+				break;
+		}
 	}
+	else ft_fprintf(2, "ft_nm: %s: file format not recognized\n", filename);
 	
 	close(fd);
 	munmap(mapping, file_stat.st_size);
@@ -56,9 +68,10 @@ int main(int argc, char **argv)
 		ft_nm("a.out");
 	else if (argc == 2)
 		ft_nm(argv[1]);
-	else for (int i = 1; i < argc; i++) {
-		ft_fprintf(STDOUT_FILENO, "\n%s:\n", argv[1]);
-		ft_nm(argv[1]);
+	else {
+		for (int i = 1; i < argc; i++) {
+			ft_nm(argv[i]);
+		}
 	}
 
 	return 0;
