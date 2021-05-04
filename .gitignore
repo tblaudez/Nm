@@ -3,5 +3,4 @@
 ft_nm
 *.[oa]
 *.sh
-32bits_files/
-64bits_files/
+TESTS/

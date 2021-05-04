@@ -6,17 +6,19 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/03 11:54:45 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/04 12:20:56 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "libft.h" // t_list
 #include <stdint.h> // uint16_t, uint32_t
 #include <stddef.h> // size_t
 
-void elf64(const char *mapping, const char *filename);
-void elf32(const char *mapping, const char *filename);
+void elf(const char *mapping, const char *filename);
+t_list *elf64(const char *mapping);
+t_list *elf32(const char *mapping);
 
 typedef struct {
 	const char *name;

@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/30 11:10:00 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/04 12:05:51 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,8 @@ void ft_nm(const char *filename)
 		exit(EXIT_FAILURE);
 	}
 
-	if (!ft_strncmp(mapping, ELFMAG, SELFMAG)) {
-		switch (mapping[EI_CLASS]) {
-			case ELFCLASS32:
-				elf32(mapping, filename);
-				break;
-			case ELFCLASS64:
-				elf64(mapping, filename);
-				break;
-			default:
-				break;
-		}
-	}
+	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
+		elf(mapping, filename);
 	else ft_fprintf(2, "ft_nm: %s: file format not recognized\n", filename);
 	
 	close(fd);
