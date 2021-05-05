@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:57:14 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/13 15:18:41 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/05 09:11:25 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ static unsigned int get_width(const char *str, char **aptr, unsigned char *flags
 		int width_arg = va_arg(g_ap, int);
 		if (width_arg < 0)
 			*flags |= MINUS;
+		*aptr = (char*)str + 1;
 		return ft_abs(width_arg);
 	}
 

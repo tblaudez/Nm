@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/04 12:03:05 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/04 12:21:09 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/05 11:50:08 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 #include <elf.h> // elf
 #include <stdlib.h> // free
 
-int elf_compare_symbols(void *a, void *b)
+bool g_swap_endian;
+
+static inline int compare_symbols(void *a, void *b)
 {
 	return ft_strcmp(((t_symbol*)a)->name, ((t_symbol*)b)->name);
 }
 
- char elf_get_type_by_flag(const t_symbol *symbol)
+static char get_type_by_flag(const t_symbol *symbol)
 {
 	const bool local = (symbol->st_bind == STB_LOCAL);
 
@@ -48,10 +50,10 @@ int elf_compare_symbols(void *a, void *b)
 	return '?';
 }
 
-char elf_get_type_by_section(const t_symbol *symbol)
+static char get_type_by_section(const t_symbol *symbol)
 {
 	const bool local = (symbol->st_bind == STB_LOCAL);
-	const char *sh_name = symbol->section.sh_name;
+	const char *sh_name = symbol->section.name;
 
 	if (!ft_strcmp(sh_name, ".bss"))
 		return (local ? 'b' : 'B');
@@ -82,7 +84,7 @@ char elf_get_type_by_section(const t_symbol *symbol)
 	
 }
 
-char elf_get_type_by_index(const t_symbol *symbol)
+static char get_type_by_index(const t_symbol *symbol)
 {
 	if (symbol->st_shndx == SHN_ABS)
 		return (symbol->st_bind == STB_LOCAL ? 'a' : 'A');
@@ -102,23 +104,23 @@ char elf_get_type_by_index(const t_symbol *symbol)
 	return '?';
 }
 
-char elf_get_type(const t_symbol *symbol)
+static char get_type(const t_symbol *symbol)
 {
 	char c;
 
-	if ((c = elf_get_type_by_index(symbol)) != '?')
+	if ((c = get_type_by_index(symbol)) != '?')
 		return c;
 	
-	if ((c = elf_get_type_by_section(symbol)) != '?')
+	if ((c = get_type_by_section(symbol)) != '?')
 		return c;
 	
-	if ((c = elf_get_type_by_flag(symbol)) != '?')
+	if ((c = get_type_by_flag(symbol)) != '?')
 		return c;
 	
 	return c;
 } 
 
-void elf_display_symbols(void *data)
+static void display_symbols(void *data)
 {
 	const t_symbol *symbol = (t_symbol*)data;
 	char type;
@@ -126,28 +128,29 @@ void elf_display_symbols(void *data)
 	if (symbol->st_type == STT_FILE)
 		return;
 	
-	type = elf_get_type(symbol);
+	type = get_type(symbol);
 
 	if (ft_strchr("vwU", type))
-		ft_fprintf(1, "%16c %c %s\n", ' ', type, symbol->name);
+		ft_fprintf(1, "%*c %c %s\n", symbol->width, ' ', type, symbol->name);
 	else if (symbol->st_value != 0 || (symbol->st_value == 0 && ft_strchr("ATnbaDRWBdtru", type)))
-		ft_fprintf(1, "%016x %c %s\n", symbol->st_value, type, symbol->name);
+		ft_fprintf(1, "%0*x %c %s\n", symbol->width, symbol->st_value, type, symbol->name);
 	else
-		ft_fprintf(1, "%16c %c %s\n", ' ', type, symbol->name);
+		ft_fprintf(1, "%*c %c %s\n", symbol->width, ' ', type, symbol->name);
 }
 
-void elf(const char *mapping, const char *filename)
+void elf_common(const char *mapping, const char *filename)
 {
 	t_list *symbol_list = NULL;
+	g_swap_endian = mapping[EI_DATA] == ELFDATA2MSB;
 
-	if (mapping[EI_CLASS] == ELFCLASS32)
+	if (mapping[EI_CLASS] == ELFCLASS32) {
 		symbol_list = elf32(mapping);
-	else if (mapping[EI_CLASS] == ELFCLASS64)
+	}
+	else if (mapping[EI_CLASS] == ELFCLASS64) {
 		symbol_list = elf64(mapping);
-	else
-		return;
-	
-	merge_sort_list(&symbol_list, elf_compare_symbols);
-	ft_lstiter(symbol_list, elf_display_symbols);
+	}
+
+	merge_sort_list(&symbol_list, compare_symbols);
+	ft_lstiter(symbol_list, display_symbols);
 	ft_lstclear(&symbol_list, free);
 }

@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/04 12:05:51 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/05 11:37:43 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 #include <errno.h>
 #include <stdio.h> // perror
 #include <stdlib.h> // exit
-
 
 void ft_nm(const char *filename)
 {
@@ -45,7 +44,7 @@ void ft_nm(const char *filename)
 	}
 
 	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
-		elf(mapping, filename);
+		elf_common(mapping, filename);
 	else ft_fprintf(2, "ft_nm: %s: file format not recognized\n", filename);
 	
 	close(fd);
