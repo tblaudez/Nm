@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/04 12:03:05 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 08:38:18 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/07 11:30:48 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,20 @@ static void display_symbols(void *data)
 	
 	type = get_type(symbol);
 
-	if (ft_strchr("vwU", type))
-		ft_fprintf(1, "%*c %c %s\n", width, ' ', type, symbol->name);
-	else if (symbol->st_value != 0 || (symbol->st_value == 0 && ft_strchr("ATnbaDRWBdtru", type)))
-		ft_fprintf(1, "%0*x %c %s\n", width, symbol->st_value, type, symbol->name);
-	else
-		ft_fprintf(1, "%*c %c %s\n", width, ' ', type, symbol->name);
+	if ((symbol->st_value != 0 && !ft_strchr("vwU", type)) || ft_strchr("ATnbaDRWBdtru", type)) {
+		#ifdef NM_COLORS
+			ft_fprintf(1, "{BLUE}%0*x {YELLOW}%c {GREEN}%s{EOC}\n", width, symbol->st_value, type, symbol->name);
+		#else
+			ft_fprintf(1, "%0*x %c %s\n", width, symbol->st_value, type, symbol->name);
+		#endif
+	}
+	else {
+		#ifdef NM_COLORS
+			ft_fprintf(1, "{BLUE}%*c {YELLOW}%c {GREEN}%s{EOC}\n", width, ' ', type, symbol->name);
+		#else
+			ft_fprintf(1, "%*c %c %s\n", width, ' ', type, symbol->name);
+		#endif
+	}
 }
 
 void elf_common(const char *mapping, const char *filename)

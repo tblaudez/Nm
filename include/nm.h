@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 08:10:15 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/07 10:35:34 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #define SWAP16(x) (g_swap_endian ? __builtin_bswap16(x) : x)
 #define SWAP32(x) (g_swap_endian ? __builtin_bswap32(x) : x)
 #define SWAP64(x) (g_swap_endian ? __builtin_bswap64(x) : x)
+
+// #define NM_COLORS
 
 void elf_common(const char *mapping, const char *filename);
 t_list *elf64(const char *mapping);
