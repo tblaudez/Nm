@@ -6,95 +6,113 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:33:01 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/27 09:24:18 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 11:52:58 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_fprintf.h"
 #include "libft.h"
+#include <stddef.h> // size_t
+#include <unistd.h> // write
 
-extern const char *color_codes[13][2];
+extern int g_fd;
+static t_color colors[] = {
+	{"{RED}", "\x1b[31m"}, {"{GREEN}", "\x1b[32m"}, {"{YELLOW}", "\x1b[33m"}, \
+	{"{BLUE}", "\x1b[34m"}, {"{MAGENTA}", "\x1b[35m"}, {"{CYAN}", "\x1b[36m"}, \
+	{"{BOLD}", "\x1b[1m"}, {"{DIM}", "\x1b[2m"}, {"{UNDERLINED}", "\x1b[4m"}, \
+	{"{BLINK}", "\x1b[5m"}, {"{REVERSE}", "\x1b[7m"}, {"{HIDDEN}", "\x1b[8m"}, \
+	{"{EOC}", "\x1b[0m"}
+};
 
 
-void update_format_list(t_printf **format_list, enum e_type type, char *str)
+void print_format(void *data)
 {
-	t_printf *node = *format_list;
+	t_format *format = (t_format*)data;
 
-	if (str == NULL)
-		return;
-	if (node == NULL) {
-		(*format_list) = (t_printf*)ft_memalloc(sizeof(t_printf));
-		(*format_list)->type = type;
-		(*format_list)->str = str;
-		return;
+	switch (format->type) {
+		case STRING:
+			write(g_fd, format->str, format->size); break;
+		case COLOR:
+			ft_putstr_fd(g_fd, format->str); break;
+		case CONVERT:
+			format_and_print_string(format->str, format->size); break;
+		default:
+			break;
 	}
-
-	while(node->next != NULL)
-		node = node->next;
-
-	node->next = (t_printf*)ft_memalloc(sizeof(t_printf));
-	node->next->type = type;
-	node->next->str = str;
 }
 
-void free_format_list(t_printf **format_list)
+static t_list *create_node(t_type type, const char *str, size_t size)
 {
-	t_printf *node = *format_list;
-	t_printf *tmp;
+	if (str == NULL || size == 0)
+		return NULL;
 
-	while (node) {
-		tmp = node;
-		node = node->next;
-		ft_memdel((void**)&tmp->str);
-		ft_memdel((void**)&tmp);
-	}
-	*format_list = NULL;
+	t_format *node = (t_format*)ft_memalloc(sizeof(t_format));
+	node->type = type;
+	node->str = str;
+	node->size = size;
+
+	return ft_lstnew((void*)node);
 }
 
-void print_format_list(int fd, t_printf *format_list)
+static int find_color_index(const char *str)
 {
-	char *convert;
-
-	for (; format_list; format_list = format_list->next) {
-		switch (format_list->type) {
-			case STRING:
-				ft_putstr_fd(fd, format_list->str);
-				break;
-			case COLOR:
-				ft_putstr_fd(fd, get_color_code(format_list->str));
-				break;
-			case CONVERT:
-				convert = convert_string(format_list->str);
-				ft_putstr_fd(fd, convert);
-				ft_memdel((void**)&convert);
-				break;
-			default:
-				break;
+	for (size_t i = 0; i < sizeof(colors) / sizeof(*colors); i++) {
+		if (!ft_strncmp(colors[i].name, str, ft_strlen(colors[i].name))) {
+			return i;
 		}
 	}
+	return -1;
 }
 
-t_printf *create_format_list(const char *str)
+static int find_format_size(const char *str)
 {
-	t_printf *format_list = NULL;
-	int start = 0, len = 0;
-
-	for (len = 0; str[start + len]; len++) {
-		enum e_type type;
-		char *token;
-
-		if ((token = is_color_converter(str + start + len)))
-			type = COLOR;
-		else if ((token = is_format_converter(str + start + len))) 
-			type = CONVERT;
-		if (token) {
-			update_format_list(&format_list, STRING, ft_strsub(str, start, len));
-			update_format_list(&format_list, type, token);
-			start += len + ft_strlen(token);
-			len = -1;
-		}
-	}
+	int i;
+	char *ptr = NULL;
 	
-	update_format_list(&format_list, STRING, ft_strsub(str, start, len));
+	// Test for '%'
+	if (*str != '%')
+		return -1;
+	// Test for flags
+	for (i = 1; ft_strchr(FLAGS, str[i]); i++);
+	// Test for width
+	if (str[i] == '*')
+		i++;
+	else if (ft_strtol(str + i, &ptr, 10))
+		i += (int)(ptr - (str + i));
+	// Test for format
+	if (!ft_strchr(FORMAT, str[i]))
+		return -1;
+	
+	return i + 1;
+}
+
+t_list *create_format_list(const char *str)
+{
+	t_list *format_list = NULL;
+	size_t len = 0;
+
+	while (*(str + len)) {
+		int color_index;
+		if ((color_index = find_color_index(str + len)) != -1) {
+			ft_lstadd_back(&format_list, create_node(STRING, str, len));
+			ft_lstadd_back(&format_list, create_node(COLOR, colors[color_index].code, ft_strlen(colors[color_index].code)));
+			str += len + ft_strlen(colors[color_index].name);
+			len = 0;
+			continue;
+		}
+
+		int format_size;
+		if ((format_size = find_format_size(str + len)) != -1) {
+			ft_lstadd_back(&format_list, create_node(STRING, str, len));
+			ft_lstadd_back(&format_list, create_node(CONVERT, str + len, format_size));
+			str += len + format_size;
+			len = 0;
+			continue;
+		}
+
+		len++;
+	}
+
+	ft_lstadd_back(&format_list, create_node(STRING, str, len));
 	return format_list;
 }

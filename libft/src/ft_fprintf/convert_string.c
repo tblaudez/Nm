@@ -6,92 +6,100 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:57:14 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/05 09:11:25 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 12:00:59 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdarg.h> // va_arg
-#include <stddef.h> // NULL
 #include "ft_fprintf.h"
 #include "libft.h"
+#include <stddef.h> // NULL
 
-extern va_list g_ap;
-
-static unsigned char get_flags(const char *str, char **aptr)
+static void get_flags(const char **aptr, size_t size, uint8_t *aflags)
 {
-	unsigned char flags = 0;
 	int i;
 
-	for (i = 1; ft_strchr(FLAGS, str[i]); i++) {
-		switch (str[i]) {
+	for (i = 1; ft_strnchr(FLAGS, (*aptr)[i], size); i++) {
+		switch ((*aptr)[i]) {
 			case '-':
-				flags |= MINUS;
-				flags &= ~ZERO;
+				*aflags |= MINUS;
+				*aflags &= ~ZERO;
 				break;
+			
 			case '0':
-				if (!(flags & MINUS))
-					flags |= ZERO;
+				if (!(*aflags & MINUS))
+					*aflags |= ZERO;
 				break;
+			
 			case '+':
-				flags |= PLUS;
-				flags &= ~BLANK;
+				*aflags |= PLUS;
+				*aflags &= ~BLANK;
 				break;
+		
 			case ' ':
-				if (!(flags & PLUS))
-					flags |= BLANK;
+				if (!(*aflags & PLUS))
+					*aflags |= BLANK;
 				break;
+			
 			case '#':
-				flags |= HASHTAG;
+				*aflags |= HASHTAG;
 				break;
+			
 			default:
 				break;
 		}
 	}
 
-	*aptr = (char*)str + i;
-	return flags;
+	*aptr += i;
 }
 
-static unsigned int get_width(const char *str, char **aptr, unsigned char *flags)
+static void get_width(const char **aptr, size_t size, uint32_t *awidth, uint8_t *aflags)
 {
-	if (*str == '*') {
-		int width_arg = va_arg(g_ap, int);
-		if (width_arg < 0)
-			*flags |= MINUS;
-		*aptr = (char*)str + 1;
-		return ft_abs(width_arg);
+	char buf[size + 1];
+	char *endptr;
+
+	if (**aptr == '*') {
+		if ((*awidth = va_arg(g_ap, int)) < 0) {
+			*aflags |= MINUS;
+			*awidth = ft_abs(*awidth);
+		}
+		*aptr += 1;
+		return;
 	}
 
-	return (unsigned int)ft_strtol(str, aptr, 10);
+	ft_strncpy(buf, *aptr, size + 1);
+	*awidth = (uint32_t)ft_strtol(buf, &endptr, 10);
+	*aptr += (uintptr_t)(endptr - buf);
 }
 
-char *convert_string(const char *str)
+void format_and_print_string(const char *str, size_t size)
 {
-	char *width_ptr = NULL, *format_ptr = NULL;
-	unsigned char flags = get_flags(str, &width_ptr);
-	unsigned int width = get_width(width_ptr, &format_ptr, &flags);
+	unsigned char flags;
+	unsigned int width;
 
-	switch (*format_ptr) {
+	get_flags(&str, size, &flags);
+	get_width(&str, size, &width, &flags);
+
+	switch (*str) {
 		case 'd':
 		case 'i':
-			return get_int_value(flags, width);
+			print_int_value(flags, width); break;
 		case 'X':
 			flags |= CAPITAL;
 		case 'p':
 			flags |= HASHTAG;
 		case 'x':
-			return get_hex_value(flags, width);
+			print_hex_value(flags, width); break;
 		case 'o':
-			return get_octal_value(flags, width);
+			print_octal_value(flags, width); break;
 		case 'b':
-			return get_binary_value(flags, width);
+			print_binary_value(flags, width); break;
 		case 'c':
-			return get_char_value(flags, width);
+			print_char_value(flags, width); break;
 		case 's':
-			return get_string_value(flags, width);
+			print_string_value(flags, width); break;
 		case '%':
-			return ft_strdup("%");
+			ft_putstr_fd(g_fd, "%"); break;
 		default:
-			return NULL;
+			break;
 	}
 }

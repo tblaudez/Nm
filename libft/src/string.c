@@ -6,7 +6,7 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/04/14 13:21:37 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 10:09:33 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,15 @@ char *ft_strchr(const char *s, int c)
 	if ((char)c == '\0')
 		return ((char*)s + ft_strlen(s));
 	for (int i = 0; s[i]; i++) {
+		if (s[i] == (char)c)
+			return (char*)s + i;
+	}
+	return NULL;
+}
+
+char *ft_strnchr(const char *s, int c, size_t size)
+{
+	for (size_t i = 0; s[i] && i < size; i++) {
 		if (s[i] == (char)c)
 			return (char*)s + i;
 	}

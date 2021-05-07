@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:24:51 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/20 11:01:08 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 10:20:44 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ void ft_memdel(void **ap);
 void *ft_memcpy(void *dst, const void *src, size_t n);
 
 // number.c
-long ft_strtol(const char *str, char **endptr, int base);
-int ft_atoi(const char *str);
+int64_t ft_strtol(const char *str, char **endptr, int base);
+int32_t ft_atoi(const char *str);
 char *ft_itoa(int nbr);
 char *ft_uitoa(unsigned int nbr);
 char *ft_itoabase(uintmax_t nbr, int base, bool use_capitals);
-int ft_abs(int j);
-int ft_min(int a, int b);
-int ft_max(int a, int b);
+int32_t ft_abs(int j);
+int32_t ft_min(int a, int b);
+int32_t ft_max(int a, int b);
 
 // ft_put.c
 void ft_putchar(int c);
@@ -77,3 +77,4 @@ char *ft_strcpy(char *dst, const char *src);
 char *ft_strdup(const char *src);
 char *ft_strndup(const char *src, size_t size);
 char *ft_strchr(const char *s, int c);
+char *ft_strnchr(const char *s, int c, size_t size);

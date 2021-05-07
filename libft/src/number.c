@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/08 09:23:37 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/13 09:55:15 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 10:20:15 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ bool ft_isalpha(int c);
 bool ft_isupper(int c);
 
 
-long ft_strtol(const char *str, char **endptr, int base)
+int64_t ft_strtol(const char *str, char **endptr, int base)
 {
 	const char *s = str;
 	int c, neg = 0, any, cutlim;
@@ -76,7 +76,7 @@ long ft_strtol(const char *str, char **endptr, int base)
 	return acc;
 }
 
-int ft_atoi(const char *str)
+int32_t ft_atoi(const char *str)
 {
 	return (int)ft_strtol(str, (char**)NULL, 10);
 }
@@ -126,17 +126,17 @@ char *ft_itoabase(uintmax_t nbr, int base, bool use_capitals)
 	return p;
 }
 
-int ft_abs(int j)
+int32_t ft_abs(int j)
 {
 	return (j >= 0 ? j : -j);
 }
 
-int ft_min(int a, int b)
+int32_t ft_min(int a, int b)
 {
 	return (a < b ? a : b);
 }
 
-int ft_max(int a, int b)
+int32_t ft_max(int a, int b)
 {
 	return (a > b ? a : b);
 }
