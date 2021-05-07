@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:33:01 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 11:52:58 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/07 09:37:28 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 
 extern int g_fd;
 static t_color colors[] = {
-	{"{RED}", "\x1b[31m"}, {"{GREEN}", "\x1b[32m"}, {"{YELLOW}", "\x1b[33m"}, \
-	{"{BLUE}", "\x1b[34m"}, {"{MAGENTA}", "\x1b[35m"}, {"{CYAN}", "\x1b[36m"}, \
-	{"{BOLD}", "\x1b[1m"}, {"{DIM}", "\x1b[2m"}, {"{UNDERLINED}", "\x1b[4m"}, \
-	{"{BLINK}", "\x1b[5m"}, {"{REVERSE}", "\x1b[7m"}, {"{HIDDEN}", "\x1b[8m"}, \
-	{"{EOC}", "\x1b[0m"}
+	{"{RED}", "\e[31m"}, {"{GREEN}", "\e[32m"}, {"{YELLOW}", "\e[33m"}, \
+	{"{BLUE}", "\e[34m"}, {"{MAGENTA}", "\e[35m"}, {"{CYAN}", "\e[36m"}, \
+	{"{BOLD}", "\e[1m"}, {"{DIM}", "\e[2m"}, {"{UNDERLINED}", "\e[4m"}, \
+	{"{BLINK}", "\e[5m"}, {"{REVERSE}", "\e[7m"}, {"{HIDDEN}", "\e[8m"}, \
+	{"{EOC}", "\e[0m"}
 };
 
 

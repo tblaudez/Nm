@@ -6,34 +6,35 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:28:54 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/04/19 13:28:43 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/05/07 10:16:02 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-TARGET = libft.a
-CC = clang
-CFLAGS = -Wall -Wextra -Werror -I include/ $(EXTRA_FLAGS)
+TARGET := libft.a
+CC := clang
+CFLAGS := -Wall -Wextra -Werror -I include/ $(EXTRA_FLAGS)
 
-SOURCES = $(wildcard src/*.c)
-SOURCES += $(wildcard src/ft_fprintf/*.c)
-HEADERS = $(wildcard include/*.h)
-OBJECTS = $(SOURCES:%.c=%.o)
+SOURCES := $(shell find src/ -name "*.c")
+HEADERS := $(shell find include/ -name "*.h")
+OBJECTS := $(SOURCES:%.c=%.o)
 
-default: $(TARGET)
-all: default
-
-%.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	ar rs $@ $(OBJECTS)
+	@printf "✅ \e[96;1m%s\e[0m\n" $(TARGET)
+	@ar rs $@ $(OBJECTS) 2>&-
+
+%.o: %.c $(HEADERS)
+	@printf "🔄 \e[34m%s: \e[32m%s\e[0m\n" $(TARGET) $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	-rm -f $(OBJECTS)
+	@printf "🗑  \e[31m%s\e[0m\n" $(OBJECTS)
+	@rm -f $(OBJECTS)
 
-fclean:
-	-rm -f $(OBJECTS)
-	-rm -f $(TARGET)
+fclean: clean
+	@printf "🗑  \e[31;1m%s\e[0m\n" $(TARGET)
+	@rm -f $(TARGET)
 
 re: fclean all
 
