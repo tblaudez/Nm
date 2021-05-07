@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/04 12:03:05 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/05 11:50:08 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 08:38:18 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 #include <elf.h> // elf
 #include <stdlib.h> // free
 
-bool g_swap_endian;
+bool g_swap_endian = false;
+static int width = 16;
 
 static inline int compare_symbols(void *a, void *b)
 {
@@ -131,23 +132,30 @@ static void display_symbols(void *data)
 	type = get_type(symbol);
 
 	if (ft_strchr("vwU", type))
-		ft_fprintf(1, "%*c %c %s\n", symbol->width, ' ', type, symbol->name);
+		ft_fprintf(1, "%*c %c %s\n", width, ' ', type, symbol->name);
 	else if (symbol->st_value != 0 || (symbol->st_value == 0 && ft_strchr("ATnbaDRWBdtru", type)))
-		ft_fprintf(1, "%0*x %c %s\n", symbol->width, symbol->st_value, type, symbol->name);
+		ft_fprintf(1, "%0*x %c %s\n", width, symbol->st_value, type, symbol->name);
 	else
-		ft_fprintf(1, "%*c %c %s\n", symbol->width, ' ', type, symbol->name);
+		ft_fprintf(1, "%*c %c %s\n", width, ' ', type, symbol->name);
 }
 
 void elf_common(const char *mapping, const char *filename)
 {
+	g_swap_endian = (mapping[EI_DATA] == ELFDATA2MSB);
 	t_list *symbol_list = NULL;
-	g_swap_endian = mapping[EI_DATA] == ELFDATA2MSB;
 
 	if (mapping[EI_CLASS] == ELFCLASS32) {
 		symbol_list = elf32(mapping);
+		width = 8;
 	}
 	else if (mapping[EI_CLASS] == ELFCLASS64) {
 		symbol_list = elf64(mapping);
+		width = 16;
+	}
+
+	if (symbol_list == NULL) {
+		ft_fprintf(2, "ft_nm: %s: no symbols\n", filename);
+		return;
 	}
 
 	merge_sort_list(&symbol_list, compare_symbols);

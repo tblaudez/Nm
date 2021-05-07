@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/05 12:05:31 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 08:10:15 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,4 @@ typedef struct {
 		size_t sh_flags;
 	}				section;
 	size_t			st_value;
-	size_t			width;
 }					t_symbol;

@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/27 10:08:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/05 11:20:21 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/06 08:25:56 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,29 +17,24 @@
 #include <stddef.h> // NULL
 #include <stdlib.h> // free
 
-static const Elf64_Ehdr *ehdr = NULL;
-static const Elf64_Shdr *shdr = NULL;
-static const char *symtab_strtab = NULL;
-static const char *shdr_strtab = NULL;
+extern bool g_swap_endian;
 
-
-static t_list *create_symbol_node(const Elf64_Sym *symbol)
+static t_list *create_symbol_node(const Elf64_Sym *symbol, const char *symstrtab, \
+	const Elf64_Shdr *shdr, const char *shstrtab)
 {
 	t_symbol *custom_symbol = ft_memalloc(sizeof(t_symbol));
 
-	custom_symbol->name = symtab_strtab + symbol->st_name;
-	custom_symbol->st_type = ELF64_ST_TYPE(symbol->st_info);
-	custom_symbol->st_bind = ELF64_ST_BIND(symbol->st_info);
-	custom_symbol->st_shndx = symbol->st_shndx;
-	custom_symbol->st_value = symbol->st_value;
-	custom_symbol->width = 16;
+	custom_symbol->name = symstrtab + SWAP32(symbol->st_name);
+	custom_symbol->st_type = ELF64_ST_TYPE(SWAP8(symbol->st_info));
+	custom_symbol->st_bind = ELF64_ST_BIND(SWAP8(symbol->st_info));
+	custom_symbol->st_shndx = SWAP16(symbol->st_shndx);
+	custom_symbol->st_value = SWAP64(symbol->st_value);
 
-	if (!(symbol->st_shndx >= SHN_LORESERVE && symbol->st_shndx <= SHN_HIRESERVE)) {
-		const Elf64_Shdr *sh = &shdr[symbol->st_shndx];
-		
-		custom_symbol->section.name = shdr_strtab + sh->sh_name;
-		custom_symbol->section.sh_type = sh->sh_type;
-		custom_symbol->section.sh_flags = sh->sh_flags;
+	if (!(custom_symbol->st_shndx >= SHN_LORESERVE && custom_symbol->st_shndx <= SHN_HIRESERVE)) {
+		const Elf64_Shdr *sh = &shdr[custom_symbol->st_shndx];
+		custom_symbol->section.name = shstrtab + SWAP32(sh->sh_name);
+		custom_symbol->section.sh_type = SWAP32(sh->sh_type);
+		custom_symbol->section.sh_flags = SWAP64(sh->sh_flags);
 	}
 
 	return ft_lstnew((void*)custom_symbol);
@@ -47,25 +42,27 @@ static t_list *create_symbol_node(const Elf64_Sym *symbol)
 
 t_list *elf64(const char *mapping)
 {
-	ehdr = (Elf64_Ehdr*)mapping;
-	shdr = (void*)ehdr + ehdr->e_shoff;
-	shdr_strtab = (void*)ehdr + shdr[ehdr->e_shstrndx].sh_offset;
+	const Elf64_Ehdr *ehdr = (Elf64_Ehdr*)mapping;
+	const Elf64_Shdr *shdr = (void*)ehdr + SWAP64(ehdr->e_shoff);
+	const char *shstrtab = (void*)ehdr + SWAP64(shdr[SWAP16(ehdr->e_shstrndx)].sh_offset);
 
 	Elf64_Sym *symtab = NULL;
+	t_list *symbol_list = NULL;
 	size_t symtab_size = 0;
+	const char *symstrtab = NULL;
+	
 	for (int i = 0; i < ehdr->e_shnum; i++) {
-		if (shdr[i].sh_type == SHT_SYMTAB) {
-			symtab = (void*)ehdr + shdr[i].sh_offset;
-			symtab_strtab = (void*)ehdr + shdr[shdr[i].sh_link].sh_offset;
-			symtab_size = shdr[i].sh_size / shdr[i].sh_entsize;
+		if (SWAP32(shdr[i].sh_type) == SHT_SYMTAB) {
+			symtab = (void*)ehdr + SWAP64(shdr[i].sh_offset);
+			symstrtab = (void*)ehdr + SWAP64(shdr[SWAP32(shdr[i].sh_link)].sh_offset);
+			symtab_size = SWAP64(shdr[i].sh_size) / SWAP64(shdr[i].sh_entsize);
 			break;
 		}
 	}
 
-	t_list *symbol_list = NULL;
 	for (size_t i = 0; i < symtab_size; i++) {
-		if (symtab[i].st_name != 0)
-			ft_lstadd_back(&symbol_list, create_symbol_node(symtab + i));
+		if (SWAP32(symtab[i].st_name) != 0)
+			ft_lstadd_back(&symbol_list, create_symbol_node(symtab + i, symstrtab, shdr, shstrtab));
 	}
 
 	return symbol_list;
