@@ -6,14 +6,12 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 14:00:54 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/04/07 14:15:11 by anonymous     ########   odam.nl         */
+/*   Updated: 2021/05/10 11:35:08 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include <unistd.h> // write
-
-size_t	ft_strlen(const char *s);
-
 
 void ft_putchar(int c)
 {

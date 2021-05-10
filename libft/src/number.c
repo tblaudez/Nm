@@ -6,10 +6,11 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/08 09:23:37 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 10:20:15 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 11:34:58 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include <stdbool.h> // bool
 #include <stddef.h> // size_t
 #include <limits.h> // LONG_MAX LONG_MIN
@@ -17,12 +18,6 @@
 
 #define LONG_DIGITS 19
 #define ULONG_DIGITS 20
-
-bool ft_isspace(int c);
-bool ft_isdigit(int c);
-bool ft_isalpha(int c);
-bool ft_isupper(int c);
-
 
 int64_t ft_strtol(const char *str, char **endptr, int base)
 {

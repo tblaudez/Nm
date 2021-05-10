@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/05 11:37:43 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 09:06:37 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,41 @@
 #include <unistd.h> // fstat, close
 #include <sys/mman.h> // mmap, munmap
 #include <elf.h> // ELFMAG, SELFMAG, EI_CLASS
-#include <errno.h>
-#include <stdio.h> // perror
 #include <stdlib.h> // exit
+#include <ar.h> // ELFMAG
 
-void ft_nm(const char *filename)
+
+void identify_file(const char *mapping, const char *filename)
+{
+	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
+		elf_common(mapping, filename);
+	else if (!ft_strncmp(mapping, ARMAG, SARMAG))
+		archive(mapping, filename);
+	else
+		ft_fprintf(2, "ft_nm: '%s': file format not recognized\n", filename);
+}
+
+void open_file(const char *filename)
 {
 	struct stat file_stat;
 	char *mapping;
 	int fd;
 
 	if ((fd = open(filename, O_RDONLY)) == -1) {
-		perror("ft_nm");
+		ft_fprintf(2, "ft_nm: '%s': Could not open\n", filename);
 		return;
 	}
+	
 	fstat(fd, &file_stat);
 	if (file_stat.st_size == 0)
 		return;
+	
 	if ((mapping = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED) {
-		perror("ft_nm");
-		close(fd);
+		ft_fprintf(2, "ft_nm: '%s':Could not map file\n", filename);
 		exit(EXIT_FAILURE);
 	}
 
-	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
-		elf_common(mapping, filename);
-	else ft_fprintf(2, "ft_nm: %s: file format not recognized\n", filename);
+	identify_file(mapping, filename);
 	
 	close(fd);
 	munmap(mapping, file_stat.st_size);
@@ -54,12 +63,12 @@ void ft_nm(const char *filename)
 int main(int argc, char **argv)
 {
 	if (argc == 1)
-		ft_nm("a.out");
+		open_file("a.out");
 	else if (argc == 2)
-		ft_nm(argv[1]);
+		open_file(argv[1]);
 	else {
 		for (int i = 1; i < argc; i++) {
-			ft_nm(argv[i]);
+			open_file(argv[i]);
 		}
 	}
 

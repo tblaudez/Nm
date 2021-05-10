@@ -6,14 +6,14 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/05/06 10:09:33 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 12:11:13 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include <stdbool.h> // bool
 #include <stddef.h> // size_t
-
-void *ft_memalloc(size_t size);
+#include <stdlib.h> // free
 
 
 size_t	ft_strlen(const char *s)
@@ -118,4 +118,44 @@ char *ft_strnchr(const char *s, int c, size_t size)
 			return (char*)s + i;
 	}
 	return NULL;
+}
+
+static t_list *create_word(const char *str, int c)
+{
+	t_word *word = (t_word*)ft_memalloc(sizeof(t_word));
+	char *offset;
+
+	word->ptr = str;
+	if ((offset = ft_strchr(str, c)))
+		word->size = (size_t)(offset - str);
+	else
+		word->size = ft_strlen(str);
+
+	return ft_lstnew((void*)word);
+}
+
+char **ft_strsplit(const char *str, int c)
+{
+	char **array, **array_addr;
+	t_list *word_list = NULL;
+
+	if (!str)
+		return NULL;
+
+	while (str) {
+		while (*str == (char)c)
+			str++;
+		if (!*str)
+			break;
+		ft_lstadd_back(&word_list, create_word(str, c));
+		str = ft_strchr(str, c);
+	}
+
+	array = (char**)ft_memalloc(sizeof(char*) * (ft_lstsize(word_list) + 1));
+	array_addr = array;
+	for (t_list *node = word_list; node ; node = node->next)
+		*array++ = ft_strsub(((t_word*)node->content)->ptr, 0, ((t_word*)node->content)->size);
+	
+	ft_lstclear(&word_list, free);
+	return array_addr;
 }

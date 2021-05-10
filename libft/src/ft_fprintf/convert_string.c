@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/13 14:57:14 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 12:00:59 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 12:13:24 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ static void get_width(const char **aptr, size_t size, uint32_t *awidth, uint8_t 
 
 void format_and_print_string(const char *str, size_t size)
 {
-	unsigned char flags;
-	unsigned int width;
+	unsigned char flags = 0;
+	unsigned int width = 0;
 
 	get_flags(&str, size, &flags);
 	get_width(&str, size, &width, &flags);

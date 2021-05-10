@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/07 10:35:34 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 09:06:43 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,14 @@
 
 // #define NM_COLORS
 
+// ELF
 void elf_common(const char *mapping, const char *filename);
 t_list *elf64(const char *mapping);
 t_list *elf32(const char *mapping);
+
+// ARCHIVE
+void archive(const char *mapping, const char *filename);
+
 
 typedef struct {
 	const char		*name;

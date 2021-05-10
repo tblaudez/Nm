@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:24:51 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 10:20:44 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/10 12:11:53 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,17 @@
 #include <stdbool.h> // bool
 #include <stdint.h> // uintmax_t
 
+
+typedef struct {
+	const char	*ptr;
+	size_t 		size;
+}				t_word;
+
 typedef struct s_list {
-	void *content;
-	struct s_list *next;
-} t_list;
+	void			*content;
+	struct s_list	*next;
+}					t_list;
+
 
 // character.c
 bool ft_isspace(int c);
@@ -78,3 +85,4 @@ char *ft_strdup(const char *src);
 char *ft_strndup(const char *src, size_t size);
 char *ft_strchr(const char *s, int c);
 char *ft_strnchr(const char *s, int c, size_t size);
+char **ft_strsplit(const char *str, int c);
