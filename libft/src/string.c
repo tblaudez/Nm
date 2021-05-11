@@ -6,7 +6,7 @@
 /*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/05/10 12:11:13 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/11 08:34:41 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ static t_list *create_word(const char *str, int c)
 
 char **ft_strsplit(const char *str, int c)
 {
-	char **array, **array_addr;
 	t_list *word_list = NULL;
 
 	if (!str)
@@ -151,11 +150,11 @@ char **ft_strsplit(const char *str, int c)
 		str = ft_strchr(str, c);
 	}
 
-	array = (char**)ft_memalloc(sizeof(char*) * (ft_lstsize(word_list) + 1));
-	array_addr = array;
+	char **array = (char**)ft_memalloc(sizeof(char*) * (ft_lstsize(word_list) + 1));
+	char **tmp = array;
 	for (t_list *node = word_list; node ; node = node->next)
-		*array++ = ft_strsub(((t_word*)node->content)->ptr, 0, ((t_word*)node->content)->size);
+		*tmp++ = ft_strsub(((t_word*)node->content)->ptr, 0, ((t_word*)node->content)->size);
 	
 	ft_lstclear(&word_list, free);
-	return array_addr;
+	return array;
 }
