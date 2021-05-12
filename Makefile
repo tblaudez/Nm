@@ -6,13 +6,13 @@
 #    By: tblaudez <tblaudez@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/03/31 15:06:14 by tblaudez      #+#    #+#                  #
-#    Updated: 2021/05/07 10:16:40 by tblaudez      ########   odam.nl          #
+#    Updated: 2021/05/12 10:06:26 by tblaudez      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET := ft_nm
 CC := clang
-CFLAGS := -Wall -Wextra -Werror -I include/ -I libft/include/ $(EXTRA_FLAGS)
+CFLAGS := -Wall -Wextra -Werror -I include/ -I libft/include/ -std=c99 $(EXTRA_FLAGS)
 
 SOURCES := $(shell find src/ -name "*.c")
 HEADERS := $(shell find include/ -name "*.h")

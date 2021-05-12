@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   ft_fprintf.h                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
+/*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/04/07 11:12:03 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/05/11 11:22:42 by tblaudez      ########   odam.nl         */
+/*   Created: 2021/05/11 11:42:36 by tblaudez      #+#    #+#                 */
+/*   Updated: 2021/05/11 11:42:38 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

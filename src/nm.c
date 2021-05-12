@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/10 09:06:37 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/12 10:37:05 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@
 #include <ar.h> // ELFMAG
 
 
-void identify_file(const char *mapping, const char *filename)
+void identify_file(const char *mapping, size_t file_size, const char *filename)
 {
 	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
 		elf_common(mapping, filename);
 	else if (!ft_strncmp(mapping, ARMAG, SARMAG))
-		archive(mapping, filename);
+		archive(mapping, file_size);
 	else
 		ft_fprintf(2, "ft_nm: '%s': file format not recognized\n", filename);
 }
@@ -54,7 +54,7 @@ void open_file(const char *filename)
 		exit(EXIT_FAILURE);
 	}
 
-	identify_file(mapping, filename);
+	identify_file(mapping, file_stat.st_size, filename);
 	
 	close(fd);
 	munmap(mapping, file_stat.st_size);

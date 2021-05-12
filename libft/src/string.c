@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   string.c                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
+/*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/04/07 14:15:20 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/05/11 08:34:41 by tblaudez      ########   odam.nl         */
+/*   Created: 2021/05/11 11:42:43 by tblaudez      #+#    #+#                 */
+/*   Updated: 2021/05/11 11:42:44 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

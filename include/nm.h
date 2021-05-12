@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/10 09:06:43 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/12 11:09:05 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,6 @@
 #define SWAP32(x) (g_swap_endian ? __builtin_bswap32(x) : x)
 #define SWAP64(x) (g_swap_endian ? __builtin_bswap64(x) : x)
 
-// #define NM_COLORS
-
-// ELF
-void elf_common(const char *mapping, const char *filename);
-t_list *elf64(const char *mapping);
-t_list *elf32(const char *mapping);
-
-// ARCHIVE
-void archive(const char *mapping, const char *filename);
-
 
 typedef struct {
 	const char		*name;
@@ -44,3 +34,26 @@ typedef struct {
 	}				section;
 	size_t			st_value;
 }					t_symbol;
+
+
+
+/* ELF */
+// elf_common.c
+void elf_common(const char *mapping, const char *filename);
+
+// elf64.c
+t_list *elf64(const char *mapping);
+
+// elf32.c
+t_list *elf32(const char *mapping);
+
+// get_type.c
+char get_type_by_flag(const t_symbol *symbol);
+char get_type_by_section(const t_symbol *symbol);
+char get_type_by_index(const t_symbol *symbol);
+char get_type(const t_symbol *symbol);
+
+
+/* ARCHIVE */
+// archive.c
+void archive(const char *mapping, size_t file_size);

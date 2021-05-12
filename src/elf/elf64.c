@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/27 10:08:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/06 08:25:56 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/12 11:35:52 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,10 @@ static t_list *create_symbol_node(const Elf64_Sym *symbol, const char *symstrtab
 	custom_symbol->st_bind = ELF64_ST_BIND(SWAP8(symbol->st_info));
 	custom_symbol->st_shndx = SWAP16(symbol->st_shndx);
 	custom_symbol->st_value = SWAP64(symbol->st_value);
+
+	// Edge case for Common symbols
+	if (SWAP16(symbol->st_shndx) == SHN_COMMON)
+		custom_symbol->st_value = SWAP64(symbol->st_size);
 
 	if (!(custom_symbol->st_shndx >= SHN_LORESERVE && custom_symbol->st_shndx <= SHN_HIRESERVE)) {
 		const Elf64_Shdr *sh = &shdr[custom_symbol->st_shndx];

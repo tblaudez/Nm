@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   ft_fprintf.c                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: anonymous <anonymous@student.codam.nl>       +#+                     */
+/*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/04/07 10:42:23 by anonymous     #+#    #+#                 */
-/*   Updated: 2021/05/11 11:35:32 by tblaudez      ########   odam.nl         */
+/*   Created: 2021/05/11 11:42:19 by tblaudez      #+#    #+#                 */
+/*   Updated: 2021/05/11 11:42:25 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static t_color colors[] = {
 };
 
 
-void format_string(const char *str, va_list *aap, int fd)
+void format_string(const char *str, va_list *ap, int fd)
 {
 	int length, prec, plus_sign, base, capitals;
 	bool ladjust, altfmt;
@@ -89,7 +89,7 @@ void format_string(const char *str, va_list *aap, int fd)
 			c = *str;
 		}
 		else if (c == '*') {
-			length = va_arg(*aap, int);
+			length = va_arg(*ap, int);
 			c = *++str;
 			if (length < 0) {
 				ladjust = !ladjust;
@@ -105,7 +105,7 @@ void format_string(const char *str, va_list *aap, int fd)
 				c = *str;
 			}
 			else if (c == '*') {
-				prec = va_arg(*aap, int);
+				prec = va_arg(*ap, int);
 				c = *++str;
 			}
 		}
@@ -117,7 +117,7 @@ void format_string(const char *str, va_list *aap, int fd)
 		
 		switch (c) {
 			case 'c':
-				c = va_arg(*aap, int);
+				c = va_arg(*ap, int);
 				ft_putchar_fd(fd, c);
 				break;
 			
@@ -129,7 +129,7 @@ void format_string(const char *str, va_list *aap, int fd)
 				if (prec == -1)
 					prec = INT32_MAX;
 				
-				p = va_arg(*aap,  char*);
+				p = va_arg(*ap,  char*);
 				if (p == NULL)
 					p = "";
 				
@@ -188,7 +188,7 @@ void format_string(const char *str, va_list *aap, int fd)
 				goto print_unsigned;
 
 			print_signed:
-				n = (long)va_arg(*aap, int);
+				n = (long)va_arg(*ap, int);
 				if (n >= 0) {
 					u = n;
 					sign_char = plus_sign;
@@ -199,7 +199,7 @@ void format_string(const char *str, va_list *aap, int fd)
 				goto print_num;
 			
 			print_unsigned:
-				u = va_arg(*aap, unsigned long);
+				u = va_arg(*ap, unsigned long);
 				goto print_num;
 			
 			print_num:
