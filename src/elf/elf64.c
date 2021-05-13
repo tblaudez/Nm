@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/27 10:08:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/13 10:33:42 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 11:24:43 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "ft_fprintf.h"
 #include <elf.h> // Elf64_Ehdr, Elf64_Shdr
 #include <stddef.h> // NULL
-#include <stdlib.h> // free
 
 extern bool g_swap_endian;
 

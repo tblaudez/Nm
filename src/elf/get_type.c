@@ -6,13 +6,13 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/12 11:01:40 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/12 11:04:19 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 11:24:49 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 #include "libft.h"
-#include <elf.h>
+#include <elf.h> // elf
 
 char get_type_by_flag(const t_symbol *symbol)
 {
