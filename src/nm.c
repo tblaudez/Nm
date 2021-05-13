@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/12 10:37:05 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 09:17:18 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,19 @@
 #include <ar.h> // ELFMAG
 
 
-void identify_file(const char *mapping, size_t file_size, const char *filename)
+static void identify_file(t_file *file_info)
 {
-	if (!ft_strncmp(mapping, ELFMAG, SELFMAG))
-		elf_common(mapping, filename);
-	else if (!ft_strncmp(mapping, ARMAG, SARMAG))
-		archive(mapping, file_size);
+	if (!ft_strncmp(file_info->mapping, ELFMAG, SELFMAG))
+		elf_common(file_info);
+	else if (!ft_strncmp(file_info->mapping, ARMAG, SARMAG))
+		archive(file_info);
 	else
-		ft_fprintf(2, "ft_nm: '%s': file format not recognized\n", filename);
+		ft_fprintf(2, "ft_nm: '%s': file format not recognized\n", file_info->name);
 }
 
-void open_file(const char *filename)
+static void open_file(const char *filename)
 {
+	static t_file file_info;
 	struct stat file_stat;
 	char *mapping;
 	int fd;
@@ -54,7 +55,11 @@ void open_file(const char *filename)
 		exit(EXIT_FAILURE);
 	}
 
-	identify_file(mapping, file_stat.st_size, filename);
+	file_info.name = filename;
+	file_info.size = file_stat.st_size;
+	file_info.mapping = mapping;
+
+	identify_file(&file_info);
 	
 	close(fd);
 	munmap(mapping, file_stat.st_size);

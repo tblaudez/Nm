@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/10 08:49:03 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/12 10:42:12 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 09:16:21 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <ar.h> // ELFMAG
 
 
-static void get_next_header(struct ar_hdr **aptr, void *endptr)
+static inline void get_next_header(struct ar_hdr **aptr, void *endptr)
 {
 	*aptr = (void*)*aptr + sizeof(**aptr) + ft_strtol((*aptr)->ar_size, NULL, 10);
 	if ((void*)*aptr >= endptr)
@@ -24,10 +24,10 @@ static void get_next_header(struct ar_hdr **aptr, void *endptr)
 }
 
 
-void archive(const char *mapping, size_t file_size)
+void archive(t_file *file_info)
 {
-	struct ar_hdr *arhdr = (struct ar_hdr*)(mapping + SARMAG);
-	void *endptr = (void*)mapping + file_size;
+	struct ar_hdr *arhdr = (struct ar_hdr*)(file_info->mapping + SARMAG);
+	void *endptr = (void*)file_info->mapping + file_info->size;
 	const char *arstrtab = NULL;
 	static char namebuf[64];
 
@@ -63,7 +63,12 @@ void archive(const char *mapping, size_t file_size)
 		#else
 		ft_fprintf(1, "\n%s:\n", namebuf);
 		#endif
-		elf_common((void*)arhdr + sizeof(*arhdr), namebuf);
+
+		file_info->name = namebuf;
+		file_info->mapping = (void*)arhdr + sizeof(*arhdr);
+		file_info->size = ft_strtol(arhdr->ar_size, NULL, 10);
+		
+		elf_common(file_info);
 		get_next_header(&arhdr, endptr);
 	}
 }

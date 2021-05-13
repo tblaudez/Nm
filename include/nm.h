@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 15:05:42 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/12 11:09:05 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 10:52:51 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,23 @@ typedef struct {
 	size_t			st_value;
 }					t_symbol;
 
+typedef struct {
+	const char	*name;
+	const char	*mapping;
+	size_t		size;
+}				t_file;
+
 
 
 /* ELF */
 // elf_common.c
-void elf_common(const char *mapping, const char *filename);
+void elf_common(const t_file *file_info);
 
 // elf64.c
-t_list *elf64(const char *mapping);
+int elf64(t_list **alist, const t_file *file_info);
 
 // elf32.c
-t_list *elf32(const char *mapping);
+int elf32(t_list **alist, const t_file *file_info);
 
 // get_type.c
 char get_type_by_flag(const t_symbol *symbol);
@@ -56,4 +62,4 @@ char get_type(const t_symbol *symbol);
 
 /* ARCHIVE */
 // archive.c
-void archive(const char *mapping, size_t file_size);
+void archive(t_file *file_info);

@@ -6,7 +6,7 @@
 /*   By: tblaudez <tblaudez@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/27 10:08:49 by tblaudez      #+#    #+#                 */
-/*   Updated: 2021/05/12 11:35:52 by tblaudez      ########   odam.nl         */
+/*   Updated: 2021/05/13 10:33:42 by tblaudez      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,44 @@ static t_list *create_symbol_node(const Elf64_Sym *symbol, const char *symstrtab
 	return ft_lstnew((void*)custom_symbol);
 }
 
-t_list *elf64(const char *mapping)
+static inline int check_file_corruption(const Elf64_Ehdr *ehdr, const t_file *file_info)
 {
-	const Elf64_Ehdr *ehdr = (Elf64_Ehdr*)mapping;
+	// Offset too big or too little
+	if (SWAP64(ehdr->e_shoff) >= (file_info->size - sizeof(Elf64_Shdr)) \
+		|| SWAP64(ehdr->e_shoff) < (sizeof(Elf64_Ehdr) + sizeof(Elf64_Phdr)))
+	{
+		ft_fprintf(2, "ft_nm: '%s': Invalid section header table offset\n", file_info->name);
+		return -1;
+	}
+	// No sections
+	if (SWAP16(ehdr->e_shnum) == 0) {
+		ft_fprintf(2, "ft_nm: '%s': Invalid section header table entry count\n", file_info->name);
+		return -1;
+	}
+	// Invalid type
+	if (!(SWAP16(ehdr->e_type) >= 1 && SWAP16(ehdr->e_type) <= 4)) {
+		ft_fprintf(2, "ft_nm: '%s': Invalid file type\n", file_info->name);
+		return -1;
+	}
+
+	return 0;
+}
+
+int elf64(t_list **alist, const t_file *file_info)
+{
+	const Elf64_Ehdr *ehdr = (Elf64_Ehdr*)file_info->mapping;
+	
+	if (check_file_corruption(ehdr, file_info) == -1)
+		return -1;
+
 	const Elf64_Shdr *shdr = (void*)ehdr + SWAP64(ehdr->e_shoff);
 	const char *shstrtab = (void*)ehdr + SWAP64(shdr[SWAP16(ehdr->e_shstrndx)].sh_offset);
 
 	Elf64_Sym *symtab = NULL;
-	t_list *symbol_list = NULL;
 	size_t symtab_size = 0;
 	const char *symstrtab = NULL;
 	
-	for (int i = 0; i < ehdr->e_shnum; i++) {
+	for (int i = 0; i < SWAP16(ehdr->e_shnum); i++) {
 		if (SWAP32(shdr[i].sh_type) == SHT_SYMTAB) {
 			symtab = (void*)ehdr + SWAP64(shdr[i].sh_offset);
 			symstrtab = (void*)ehdr + SWAP64(shdr[SWAP32(shdr[i].sh_link)].sh_offset);
@@ -64,10 +90,13 @@ t_list *elf64(const char *mapping)
 		}
 	}
 
+	if (!symtab || !symstrtab || !symtab_size)
+		return 0;
+
 	for (size_t i = 0; i < symtab_size; i++) {
 		if (SWAP32(symtab[i].st_name) != 0)
-			ft_lstadd_back(&symbol_list, create_symbol_node(symtab + i, symstrtab, shdr, shstrtab));
+			ft_lstadd_back(alist, create_symbol_node(symtab + i, symstrtab, shdr, shstrtab));
 	}
 
-	return symbol_list;
+	return 0;
 }
